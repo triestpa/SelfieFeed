@@ -4,17 +4,17 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.util.JsonReader;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.triestpa.selfiefeed.SelfiePullTask.NetworkRequestResult;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult> {
@@ -105,50 +105,20 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
     }
 
     public List readSelfieStream(InputStream in) throws IOException {
-        JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
-        try {
-            return readSelfieArray(reader);
+        Reader inputReader = new InputStreamReader(in);
+        Gson gson = new Gson();
+
+        Response response = gson.fromJson(inputReader, Response.class);
+        Log.d(TAG, response.meta.code);
+        Log.d(TAG, response.pagination.nextURL);
+
+        for (Selfie selfie : response.selfies) {
+            Log.d(TAG, selfie.filter);
+            Log.d(TAG, selfie.images.standard_resolution.url);
         }
-        finally{
-            reader.close();
-        }
+
+        return response.selfies;
     }
-
-    public ArrayList<Selfie> readSelfieArray(JsonReader reader) throws IOException {
-        ArrayList<Selfie> selfies = new ArrayList<Selfie>();
-
-        reader.beginArray();
-        while (reader.hasNext()) {
-            selfies.add(readItem(reader));
-        }
-        reader.endArray();
-        return selfies;
-    }
-
-    public Selfie readItem (JsonReader reader) throws IOException {
-        Selfie thisSelfie = new Selfie();
-
-        reader.beginObject();
-        while (reader.hasNext()) {
-            String name = reader.nextName();
-            if (name.equals("caption")) {
-                thisSelfie.setCaption(reader.nextString());
-            } else if (name.equals("filter")) {
-                thisSelfie.setFilter(reader.nextString());
-            } else if (name.equals("images")) {
-                   // read images
-            } else if (name.equals("createdTime")) {
-               thisSelfie.setCreatedTime(reader.nextString());
-            } else {
-                reader.skipValue();
-            }
-        }
-        reader.endObject();
-
-        Log.d(TAG, thisSelfie.getFilter());
-        return thisSelfie;
-    }
-
 
     public class NetworkRequestResult {
 

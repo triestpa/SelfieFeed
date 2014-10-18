@@ -1,17 +1,39 @@
 package com.triestpa.selfiefeed;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Selfie {
+
+    String filter;
+
+    @SerializedName("images")
+    Images images;
+
+    class Images {
+        Image low_resolution;
+        Image thumbnail;
+        Image standard_resolution;
+    }
+
+    class Image {
+        String url;
+        String width;
+        String height;
+    }
+/*
     String thumbnailPictureURL;
     String lowResPictureURL;
     String fullResPictureURL;
-    String filter;
+
     String createdTime;
     String caption;
     String user;
     String likes;
+    */
+
 
     public Selfie () {}
-
+/*
     public String getThumbnailPictureURL() {
         return thumbnailPictureURL;
     }
@@ -75,6 +97,7 @@ public class Selfie {
     public void setLikes(String likes) {
         this.likes = likes;
     }
+    */
 
 
 }
