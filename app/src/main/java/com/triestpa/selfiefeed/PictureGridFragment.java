@@ -7,9 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import com.squareup.picasso.Picasso;
 
@@ -19,13 +19,14 @@ import java.util.List;
 public class PictureGridFragment extends Fragment {
     SelfieFeedActivity mActivity;
     View mView;
-    GridView mGridView;
+    ListView mListView;
     ListAdapter mAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivity = (SelfieFeedActivity) getActivity();
+
     }
 
     @Override
@@ -33,14 +34,14 @@ public class PictureGridFragment extends Fragment {
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_picture_grid, container, false);
 
-        mGridView = (GridView) mView.findViewById(R.id.gridview);
+        mListView = (ListView) mView.findViewById(R.id.gridview);
 
         return mView;
     }
 
     public void populateList(List<Selfie> selfieList) {
         mAdapter = new SelfieAdapter(selfieList);
-        mGridView.setAdapter(mAdapter);
+        mListView.setAdapter(mAdapter);
     }
 
     public static class ViewHolder {
@@ -99,11 +100,11 @@ public class PictureGridFragment extends Fragment {
                 holder = new ViewHolder();
                 switch (type) {
                     case LIST_ITEM_TYPE_BIG_PIC:
-                        convertView = mInflater.inflate(R.layout.adapter_big_picture, parent, false);
+                        convertView = mInflater.inflate(R.layout.adapter_selfie_cell, parent, false);
                         holder.selfieImage = (ImageView) convertView.findViewById(R.id.selfie_image);
                         break;
                     case LIST_ITEM_TYPE_SMALL_PIC:
-                        convertView = mInflater.inflate(R.layout.adapter_big_picture, parent, false);
+                        convertView = mInflater.inflate(R.layout.adapter_selfie_cell, parent, false);
                         holder.selfieImage = (ImageView) convertView.findViewById(R.id.selfie_image);
                         break;
                 }
