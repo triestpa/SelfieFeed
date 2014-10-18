@@ -107,16 +107,18 @@ public class PictureGridFragment extends Fragment {
                         holder.selfieImage = (ImageView) convertView.findViewById(R.id.selfie_image);
                         break;
                 }
-                convertView.setTag(holder);
-                ImageView selfieImage = (ImageView) holder.selfieImage;
 
-                String imageURL = mSelfies.get(position).images.standard_resolution.url;
-                Picasso.with(mActivity).load(imageURL).into(selfieImage);
+                convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
 
 
+            Selfie thisSelfie = mSelfies.get(position);
+            if (thisSelfie != null) {
+                String imageURL = thisSelfie.images.standard_resolution.url;
+                Picasso.with(mActivity).load(imageURL).resize(500, 500).noFade().centerCrop().into(holder.selfieImage);
+            }
 
             return convertView;
         }
