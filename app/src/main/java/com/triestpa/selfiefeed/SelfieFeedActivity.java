@@ -12,8 +12,9 @@ public class SelfieFeedActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selfie_feed);
-    }
 
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new PictureGridFragment()).commit();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
