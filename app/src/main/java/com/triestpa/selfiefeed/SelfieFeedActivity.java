@@ -7,14 +7,18 @@ import android.view.MenuItem;
 
 public class SelfieFeedActivity extends FragmentActivity {
 
+    PictureGridFragment mGridFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selfie_feed);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new PictureGridFragment()).commit();
+        mGridFragment = new PictureGridFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, mGridFragment).commit();
 
-        String [] taskParams = {"https://api.instagram.com/v1/tags/selfie/media/recent?client_id=84368c072bf84e2c89e5265891985868"};
+        String apiCall = "https://api.instagram.com/v1/tags/selfie/media/recent?client_id=" + getResources().getString(R.string.client_id);
+        String [] taskParams = {apiCall};
 
         SelfiePullTask pullTask = new SelfiePullTask(this);
         pullTask.execute(taskParams);

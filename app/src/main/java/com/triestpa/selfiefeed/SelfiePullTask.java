@@ -15,15 +15,14 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
 
 public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult> {
     static final String TAG = SelfiePullTask.class.getSimpleName();
-    Context mContext;
+    SelfieFeedActivity mContext;
 
     public SelfiePullTask (Context context) {
         super();
-        mContext = context;
+        mContext = (SelfieFeedActivity) context;
     }
 
     @Override
@@ -51,7 +50,7 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
         result.setStream(stream);
 
         try {
-           readSelfieStream(stream);
+           result.setResponse(readSelfieStream(stream));
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -65,6 +64,7 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
             //hide loading animation, populate list
             Log.d(TAG, "Success!!!");
 
+            mContext.mGridFragment.populateList(result.getResponse().selfies);
             /*
             try {
                readSelfieStream(result.getStream());
@@ -104,7 +104,7 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
         return stream;
     }
 
-    public List readSelfieStream(InputStream in) throws IOException {
+    public Response readSelfieStream(InputStream in) throws IOException {
         Reader inputReader = new InputStreamReader(in);
         Gson gson = new Gson();
 
@@ -117,7 +117,7 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
             Log.d(TAG, selfie.images.standard_resolution.url);
         }
 
-        return response.selfies;
+        return response;
     }
 
     public class NetworkRequestResult {
@@ -133,6 +133,10 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
 
         private int code;
         private InputStream stream;
+        private Response response;
+
+
+
 
         public NetworkRequestResult (int resultCode, InputStream resultStream) {
             code = resultCode;
@@ -143,5 +147,8 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
         public InputStream getStream() {return stream;}
         public NetworkRequestResult setCode(int c) {code = c; return this;}
         public NetworkRequestResult setStream(InputStream s) {stream = s; return this;}
+
+        public Response getResponse() {return response;}
+        public void setResponse(Response response) {this.response = response;}
     }
 }

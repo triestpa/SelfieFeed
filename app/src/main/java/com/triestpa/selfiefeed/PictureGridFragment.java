@@ -9,15 +9,18 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 
-import java.util.ArrayList;
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 
 public class PictureGridFragment extends Fragment {
     SelfieFeedActivity mActivity;
     View mView;
-
+    GridView mGridView;
+    ListAdapter mAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,15 +33,14 @@ public class PictureGridFragment extends Fragment {
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_picture_grid, container, false);
 
-        //Test code
-        Selfie testSelfie = new Selfie();
-        ArrayList<Selfie> selfieList = new ArrayList<Selfie>();
-        selfieList.add(testSelfie);
-
-        GridView gridview = (GridView) mView.findViewById(R.id.gridview);
-        gridview.setAdapter(new SelfieAdapter(selfieList));
+        mGridView = (GridView) mView.findViewById(R.id.gridview);
 
         return mView;
+    }
+
+    public void populateList(List<Selfie> selfieList) {
+        mAdapter = new SelfieAdapter(selfieList);
+        mGridView.setAdapter(mAdapter);
     }
 
     public static class ViewHolder {
@@ -106,13 +108,14 @@ public class PictureGridFragment extends Fragment {
                         break;
                 }
                 convertView.setTag(holder);
+                ImageView selfieImage = (ImageView) holder.selfieImage;
+
+                String imageURL = mSelfies.get(position).images.standard_resolution.url;
+                Picasso.with(mActivity).load(imageURL).into(selfieImage);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            ImageView selfieImage = (ImageView) holder.selfieImage;
-
-            Selfie thisMessage = getItem(position);
 
 
             return convertView;
