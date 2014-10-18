@@ -13,24 +13,26 @@ public class SelfieFeedActivity extends FragmentActivity {
         setContentView(R.layout.activity_selfie_feed);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new PictureGridFragment()).commit();
+
+        String [] taskParams = {"https://api.instagram.com/v1/tags/selfie/media/recent?client_id=84368c072bf84e2c89e5265891985868"};
+
+        SelfiePullTask pullTask = new SelfiePullTask(this);
+        pullTask.execute(taskParams);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.selfie_feed, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

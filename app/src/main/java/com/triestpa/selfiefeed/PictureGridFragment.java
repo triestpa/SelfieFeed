@@ -31,7 +31,7 @@ public class PictureGridFragment extends Fragment {
         mView = inflater.inflate(R.layout.fragment_picture_grid, container, false);
 
         //Test code
-        Selfie testSelfie = new Selfie("randomURL");
+        Selfie testSelfie = new Selfie();
         ArrayList<Selfie> selfieList = new ArrayList<Selfie>();
         selfieList.add(testSelfie);
 
@@ -60,12 +60,12 @@ public class PictureGridFragment extends Fragment {
 
         @Override
         public int getItemViewType(int position) {
-           /*
+            /*
             if (mSelfies.get(position))
                 return LIST_ITEM_TYPE_BIG_PIC;
             else
                 return LIST_ITEM_TYPE_SMALL_PIC;
-                */
+            */
             return LIST_ITEM_TYPE_BIG_PIC;
         }
 
