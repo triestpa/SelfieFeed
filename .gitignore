@@ -24,3 +24,11 @@ proguard/
 
 # Log Files
 *.log
+
+# Android Studio
+.idea
+.gradle
+build/
+
+# OSX files
+.DS_Store
