@@ -2,7 +2,6 @@ package com.triestpa.selfiefeed;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,13 +66,12 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
 
         final Selfie thisSelfie = mSelfies.get(position);
         if (thisSelfie != null) {
-            final String imageURL = thisSelfie.images.standard_resolution.url;
+            final String imageURL = thisSelfie.getImages().getStandard_resolution().getUrl();
 
             // Zoom the image when taped
             holder.mSelfieImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d(TAG, thisSelfie.filter);
                     mActivity.mGridFragment.zoomImageFromThumb(holder.mSelfieImage, imageURL);
                 }
             });

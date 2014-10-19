@@ -26,7 +26,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-/* This fragment is the meat of the application. This is where the network requests are call from, where the RecyclerView rendering the images is instantiated, and where the UI elements of the app are linked to their functions */
+/* This is where the network requests are called from, where the RecyclerView is instantiated, and where the UI elements of the app are linked to their functions */
 public class PictureGridFragment extends Fragment {
     final String TAG = PictureGridFragment.class.getSimpleName();
     SelfieFeedActivity mActivity;
@@ -66,7 +66,8 @@ public class PictureGridFragment extends Fragment {
         mLayoutManager = new StaggeredGridLayoutManager(2, 1);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        //Find most recent selfies on swipe up
+        // Find most recent selfies on swipe up
+        // TODO This causes an ArrayIndexOutOfBoundsException crash about 20% of the time, originating from the RecyclerView
         mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -100,7 +101,6 @@ public class PictureGridFragment extends Fragment {
                     isDownloading = true;
                     mLoadMoreButton.setText("Downloading");
                     String apiCall = mNextPage;
-                    Log.d(TAG, apiCall);
                     String[] taskParams = {apiCall};
                     SelfiePullTask pullTask = new SelfiePullTask(mActivity);
 
@@ -179,18 +179,18 @@ public class PictureGridFragment extends Fragment {
         // If it is not 'refreshing' then it is loading an older response page
         if (!mSwipeRefreshLayout.isRefreshing()) {
             //If loading older results, add to the bottom of the list
-            for (Selfie selfie : response.selfies) {
+            for (Selfie selfie : response.getSelfies()) {
                 mAdapter.addItemToBack(selfie);
             }
-            mNextPage = response.pagination.nextURL;
+            mNextPage = response.getPagination().getNextURL();
             mLoadMoreButton.setText(getString(R.string.load_more));
             isDownloading = false;
         } else {
             // if adding new results, add to the top of the list
-            for (Selfie selfie : response.selfies) {
+            for (Selfie selfie : response.getSelfies()) {
                 mAdapter.addItemToFront(selfie);
-                mMaxId = response.selfies.get(0).id;
-                mRecyclerView.scrollToPosition(response.selfies.size());
+                mMaxId = response.getSelfies().get(0).getId();
+                mRecyclerView.scrollToPosition(response.getSelfies().size());
             }
             mSwipeRefreshLayout.setRefreshing(false);
             isDownloading = false;

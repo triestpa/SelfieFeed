@@ -52,9 +52,10 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
            result.setResponse(readSelfieStream(stream));
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
+            return result.setCode(NetworkRequestResult.PARSE_ERROR);
         }
 
-        if (!result.getResponse().meta.code.equals("200")) {
+        if (!result.getResponse().getMeta().getCode().equals("200")) {
             result.setCode(NetworkRequestResult.HTTP_ERROR);
         }
 
@@ -66,7 +67,7 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
     protected void onPostExecute(NetworkRequestResult result) {
         super.onPostExecute(result);
         if (result.getCode() == NetworkRequestResult.SUCCESS) {
-            if (result.getResponse().selfies != null) {
+            if (result.getResponse().getSelfies() != null) {
                 mContext.mGridFragment.populateList(result.getResponse());
             }
         }
@@ -115,7 +116,7 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
         public static final int UNKNOWN = -1;
         public static final int SUCCESS = 0;
         public static final int NO_NETWORK = 1;
-        public static final int NO_ROUTE = 2;
+        public static final int PARSE_ERROR = 2;
         public static final int HTTP_ERROR = 3;
         public static final int NO_DATA = 4;
 
@@ -127,13 +128,19 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
             code = resultCode;
             stream = resultStream;
         }
+
         public NetworkRequestResult () {this(-1, null);}
+
         public int getCode() {return code;}
-        public InputStream getStream() {return stream;}
+
         public NetworkRequestResult setCode(int c) {code = c; return this;}
+
+        public InputStream getStream() {return stream;}
+
         public NetworkRequestResult setStream(InputStream s) {stream = s; return this;}
 
         public Response getResponse() {return response;}
+
         public void setResponse(Response response) {this.response = response;}
     }
 }
