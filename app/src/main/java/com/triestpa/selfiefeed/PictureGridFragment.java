@@ -39,14 +39,8 @@ public class PictureGridFragment extends Fragment {
         mView = inflater.inflate(R.layout.fragment_picture_grid, container, false);
 
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.gridview);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
-        mLayoutManager = new StaggeredGridLayoutManager(2,1
-        );//new LinearLayoutManager(mActivity);
+        mRecyclerView.setHasFixedSize(false);
+        mLayoutManager = new StaggeredGridLayoutManager(2,1);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 

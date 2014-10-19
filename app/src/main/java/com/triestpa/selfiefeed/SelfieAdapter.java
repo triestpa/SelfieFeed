@@ -32,12 +32,9 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
     }
 
     @Override
-    public SelfieAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
-
+    public SelfieAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.adapter_selfie_cell, parent, false);
-
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
@@ -46,27 +43,29 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         StaggeredGridLayoutManager.LayoutParams layoutParams = new StaggeredGridLayoutManager.LayoutParams(100, 100);
 
+        ViewGroup.LayoutParams imageParams = holder.mSelfieImage.getLayoutParams();
 
         if ((position % 3) == 0) {
             layoutParams.setFullSpan(true);
+            imageParams.height = 500;
+            imageParams.width = 500;
+
         }
         else {
             layoutParams.setFullSpan(false);
+            imageParams.height = 300;
+            imageParams.width = 300;
         }
+
+        holder.mSelfieImage.setLayoutParams(imageParams);
         holder.mView.setLayoutParams(layoutParams);
 
         Selfie thisSelfie = mSelfies.get(position);
         if (thisSelfie != null) {
             String imageURL = thisSelfie.images.standard_resolution.url;
 
-            if ((position % 2) == 1) {
-                Picasso.with(mActivity).load(imageURL).resize(500, 500).noFade().centerCrop().into(holder.mSelfieImage);
-            }
-            else {
-                Picasso.with(mActivity).load(imageURL).resize(500, 500).noFade().centerCrop().into(holder.mSelfieImage);
-            }
+            Picasso.with(mActivity).load(imageURL).fit().noFade().centerCrop().into(holder.mSelfieImage);
         }
-
     }
 
     @Override
