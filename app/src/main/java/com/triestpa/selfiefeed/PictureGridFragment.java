@@ -2,8 +2,9 @@ package com.triestpa.selfiefeed;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ public class PictureGridFragment extends Fragment {
     View mView;
 
     private RecyclerView mRecyclerView;
+ //   private StaggeredGridLayoutManager;
     private SelfieAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
@@ -43,12 +45,15 @@ public class PictureGridFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(mActivity);
+        mLayoutManager = new StaggeredGridLayoutManager(2,1
+        );//new LinearLayoutManager(mActivity);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
 
         mSelfieList = new ArrayList<Selfie>();
         mAdapter = new SelfieAdapter(mSelfieList, mActivity);
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         return mView;
     }
@@ -62,7 +67,6 @@ public class PictureGridFragment extends Fragment {
            mAdapter.addItem(selfie);
        }
     }
-
 
 
 }

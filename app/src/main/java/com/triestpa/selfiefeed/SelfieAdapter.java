@@ -1,6 +1,7 @@
 package com.triestpa.selfiefeed;
 
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,25 +15,22 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
     private List<Selfie> mSelfies;
     private SelfieFeedActivity mActivity;
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        public View mView;
         public ImageView mSelfieImage;
 
         public ViewHolder(View v) {
             super(v);
+            mView = v;
             mSelfieImage = (ImageView) v.findViewById(R.id.selfie_image);
         }
     }
 
-    // Provide a suitable constructor (depends on the kind of dataset)
     public SelfieAdapter(List<Selfie> selfies, SelfieFeedActivity context) {
         mSelfies = selfies;
         mActivity = context;
     }
 
-    // Create new views (invoked by the layout manager)
     @Override
     public SelfieAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {
@@ -44,20 +42,33 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
         return vh;
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
+        StaggeredGridLayoutManager.LayoutParams layoutParams = new StaggeredGridLayoutManager.LayoutParams(100, 100);
+
+
+        if ((position % 3) == 0) {
+            layoutParams.setFullSpan(true);
+        }
+        else {
+            layoutParams.setFullSpan(false);
+        }
+        holder.mView.setLayoutParams(layoutParams);
+
         Selfie thisSelfie = mSelfies.get(position);
         if (thisSelfie != null) {
             String imageURL = thisSelfie.images.standard_resolution.url;
-            Picasso.with(mActivity).load(imageURL).resize(500, 500).noFade().centerCrop().into(holder.mSelfieImage);
+
+            if ((position % 2) == 1) {
+                Picasso.with(mActivity).load(imageURL).resize(500, 500).noFade().centerCrop().into(holder.mSelfieImage);
+            }
+            else {
+                Picasso.with(mActivity).load(imageURL).resize(500, 500).noFade().centerCrop().into(holder.mSelfieImage);
+            }
         }
 
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mSelfies.size();
@@ -76,79 +87,3 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
     }
 
 }
-    /*
-    public static class ViewHolder {
-        public ImageView selfieImage;
-    }
-
-    private class SelfieAdapter extends BaseAdapter {
-        private static final int LIST_ITEM_TYPE_BIG_PIC = 0;
-        private static final int LIST_ITEM_TYPE_SMALL_PIC = 1;
-
-        private List<Selfie> mSelfies;
-
-        private LayoutInflater mInflater;
-
-        public SelfieAdapter(List<Selfie> selfies) {
-            mInflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            mSelfies = selfies;
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return LIST_ITEM_TYPE_BIG_PIC;
-        }
-
-        @Override
-        public int getViewTypeCount() {
-            return 2;
-        }
-
-        @Override
-        public int getCount() {
-            return mSelfies.size();
-        }
-
-        @Override
-        public Selfie getItem(int position) {
-            return mSelfies.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder = null;
-            int type = getItemViewType(position);
-            if (convertView == null) {
-                holder = new ViewHolder();
-                switch (type) {
-                    case LIST_ITEM_TYPE_BIG_PIC:
-                        convertView = mInflater.inflate(R.layout.adapter_selfie_cell, parent, false);
-                        holder.selfieImage = (ImageView) convertView.findViewById(R.id.selfie_image);
-                        break;
-                    case LIST_ITEM_TYPE_SMALL_PIC:
-                        convertView = mInflater.inflate(R.layout.adapter_selfie_cell, parent, false);
-                        holder.selfieImage = (ImageView) convertView.findViewById(R.id.selfie_image);
-                        break;
-                }
-
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-
-
-            Selfie thisSelfie = mSelfies.get(position);
-            if (thisSelfie != null) {
-                String imageURL = thisSelfie.images.standard_resolution.url;
-                Picasso.with(mActivity).load(imageURL).resize(500, 500).noFade().centerCrop().into(holder.selfieImage);
-            }
-
-            return convertView;
-        }
-    }
-    */
