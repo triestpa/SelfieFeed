@@ -2,6 +2,7 @@ package com.triestpa.selfiefeed;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -14,22 +15,21 @@ import java.util.List;
 
 
 public class PictureGridFragment extends Fragment {
+    final String TAG = PictureGridFragment.class.getSimpleName();
     SelfieFeedActivity mActivity;
     View mView;
 
-    private RecyclerView mRecyclerView;
- //   private StaggeredGridLayoutManager;
+    String mMaxId;
+
+    RecyclerView mRecyclerView;
     private SelfieAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
-    List<Selfie> mSelfieList;
-
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivity = (SelfieFeedActivity) getActivity();
-
     }
 
     @Override
@@ -43,22 +43,35 @@ public class PictureGridFragment extends Fragment {
         mLayoutManager = new StaggeredGridLayoutManager(2,1);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(true);
+                String apiCall = "https://api.instagram.com/v1/tags/selfie/media/recent?client_id=" + getResources().getString(R.string.client_id);
+                        if (mMaxId != null) {
+                            apiCall = apiCall + "&max_tag_id=" + mMaxId;
+                        }
+                String [] taskParams = {apiCall};
 
-        mSelfieList = new ArrayList<Selfie>();
-        mAdapter = new SelfieAdapter(mSelfieList, mActivity);
+                SelfiePullTask pullTask = new SelfiePullTask(mActivity);
+                pullTask.execute(taskParams);
+            }
+        });
+
+        mAdapter = new SelfieAdapter(new ArrayList<Selfie>(), mActivity);
         mRecyclerView.setAdapter(mAdapter);
+
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         return mView;
     }
 
     public void populateList(List<Selfie> selfieList) {
-       mSelfieList.addAll(selfieList);
-
-        mRecyclerView.removeAllViews();
+       mRecyclerView.removeAllViews();
 
        for (Selfie selfie : selfieList) {
-           mAdapter.addItem(selfie);
+           mAdapter.addItemToFront(selfie);
        }
     }
 

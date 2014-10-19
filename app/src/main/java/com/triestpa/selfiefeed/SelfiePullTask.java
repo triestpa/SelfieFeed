@@ -64,8 +64,13 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
             //hide loading animation, populate list
             Log.d(TAG, "Success!!!");
 
-            mContext.mGridFragment.populateList(result.getResponse().selfies);
+            if (result.getResponse().selfies != null) {
+                mContext.mGridFragment.mMaxId = result.getResponse().selfies.get(0).id;
+                mContext.mGridFragment.populateList(result.getResponse().selfies);
+                mContext.mGridFragment.mSwipeRefreshLayout.setRefreshing(false);
+                mContext.mGridFragment.mRecyclerView.scrollToPosition(result.getResponse().selfies.size());
 
+            }
         }
         else {
             //display error message

@@ -2,6 +2,7 @@ package com.triestpa.selfiefeed;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder> {
+    final String TAG = SelfieAdapter.class.getSimpleName();
+
     private List<Selfie> mSelfies;
     private SelfieFeedActivity mActivity;
 
@@ -60,9 +63,16 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
         holder.mSelfieImage.setLayoutParams(imageParams);
         holder.mView.setLayoutParams(layoutParams);
 
-        Selfie thisSelfie = mSelfies.get(position);
+        final Selfie thisSelfie = mSelfies.get(position);
         if (thisSelfie != null) {
             String imageURL = thisSelfie.images.standard_resolution.url;
+
+            holder.mSelfieImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d(TAG, thisSelfie.filter);
+                }
+            });
 
             Picasso.with(mActivity).load(imageURL).fit().noFade().centerCrop().into(holder.mSelfieImage);
         }
@@ -73,9 +83,15 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
         return mSelfies.size();
     }
 
-    public void addItem(Selfie selfie) {
+    public void addItemToBack(Selfie selfie) {
         int position = mSelfies.size();
-        mSelfies.add(selfie);
+        mSelfies.add(position, selfie);
+        notifyItemInserted(position);
+    }
+
+    public void addItemToFront(Selfie selfie) {
+        int position = 0;
+        mSelfies.add(position, selfie);
         notifyItemInserted(position);
     }
 

@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public class Selfie {
 
     String filter;
+    String id;
 
     @SerializedName("images")
     Images images;
