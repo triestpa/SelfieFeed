@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/grid_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/White">
@@ -28,6 +29,14 @@
         android:textColor="@color/White"
         android:background="@drawable/blue_button_selector"
         />
+
+    <ImageView
+        android:id="@+id/expanded_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:contentDescription="@string/expanded_image_description" />
+
 
 
 </RelativeLayout>

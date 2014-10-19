@@ -45,7 +45,7 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         StaggeredGridLayoutManager.LayoutParams layoutParams = new StaggeredGridLayoutManager.LayoutParams(100, 100);
         ViewGroup.LayoutParams imageParams = holder.mSelfieImage.getLayoutParams();
 
@@ -65,12 +65,13 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
 
         final Selfie thisSelfie = mSelfies.get(position);
         if (thisSelfie != null) {
-            String imageURL = thisSelfie.images.standard_resolution.url;
+            final String imageURL = thisSelfie.images.standard_resolution.url;
 
             holder.mSelfieImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.d(TAG, thisSelfie.filter);
+                    mActivity.mGridFragment.zoomImageFromThumb(holder.mSelfieImage, imageURL);
                 }
             });
             Picasso.with(mActivity).load(imageURL).fit().noFade().centerCrop().into(holder.mSelfieImage);
