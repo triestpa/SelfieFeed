@@ -24,7 +24,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="40dp"
-        android:text="Load More"
+        android:text="@string/load_more"
         android:textColor="@color/White"
         android:background="@drawable/blue_button_selector"
         />

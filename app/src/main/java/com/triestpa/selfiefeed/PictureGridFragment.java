@@ -48,11 +48,28 @@ public class PictureGridFragment extends Fragment {
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.gridview);
         mLoadMoreButton = (Button) mView.findViewById(R.id.load_more);
 
+        //Load the next page of results on click
+        mLoadMoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!isDownloading && mNextPage != null) {
+                    isDownloading = true;
+                    mLoadMoreButton.setText("Downloading");
+                    String apiCall = mNextPage;
+                    Log.d(TAG, apiCall);
+                    String[] taskParams = {apiCall};
+                    SelfiePullTask pullTask = new SelfiePullTask(mActivity);
+
+                    pullTask.execute(taskParams);
+                }
+            }
+        });
+
         mRecyclerView.setHasFixedSize(false);
-        mLayoutManager = new StaggeredGridLayoutManager(2,1);
+        mLayoutManager = new StaggeredGridLayoutManager(2, 1);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        //Animate Button Visibility on Scroll
+        //Find most recent selfies on swipe up
         mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -77,6 +94,7 @@ public class PictureGridFragment extends Fragment {
             }
         });
 
+        //Animate Button Visibility on Scroll
         mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int scrollState) {
@@ -129,39 +147,38 @@ public class PictureGridFragment extends Fragment {
 
         mAdapter = new SelfieAdapter(new ArrayList<Selfie>(), mActivity);
         mRecyclerView.setAdapter(mAdapter);
-
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         //Download initial data
         String apiCall = "https://api.instagram.com/v1/tags/selfie/media/recent?client_id=" + getResources().getString(R.string.client_id);
-        String [] taskParams = {apiCall};
+        String[] taskParams = {apiCall};
         SelfiePullTask pullTask = new SelfiePullTask(mActivity);
         pullTask.execute(taskParams);
-        mSwipeRefreshLayout.setRefreshing(true);
 
         return mView;
     }
 
     public void populateList(Response response) {
-        // If it is not 'refreshing' then it is loading older posts
+        // If it is not 'refreshing' then it is loading an older response page
         if (!mSwipeRefreshLayout.isRefreshing()) {
             for (Selfie selfie : response.selfies) {
                 mAdapter.addItemToBack(selfie);
-
             }
+
             mNextPage = response.pagination.nextURL;
-        }
-        else {
+            mLoadMoreButton.setText(getString(R.string.load_more));
+        } else {
+
             for (Selfie selfie : response.selfies) {
                 mAdapter.addItemToFront(selfie);
-            }
-            mMaxId = response.selfies.get(0).id;
-            mRecyclerView.scrollToPosition(response.selfies.size());
-        }
-        mSwipeRefreshLayout.setRefreshing(false);
-        isDownloading = false;
-    }
 
+                mMaxId = response.selfies.get(0).id;
+                mRecyclerView.scrollToPosition(response.selfies.size());
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
+            isDownloading = false;
+        }
+    }
 
 
 }

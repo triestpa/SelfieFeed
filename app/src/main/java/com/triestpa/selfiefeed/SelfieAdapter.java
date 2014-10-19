@@ -31,7 +31,6 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
         }
     }
 
-
     public SelfieAdapter(List<Selfie> selfies, SelfieFeedActivity context) {
         mSelfies = selfies;
         mActivity = context;
@@ -83,14 +82,14 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
         return mSelfies.size();
     }
 
-    public void addItemToBack(Selfie selfie) {
+    public void addItemToBack(Selfie selfie) throws IndexOutOfBoundsException {
         int position = mSelfies.size();
         mSelfies.add(position, selfie);
 
         notifyItemInserted(position);
     }
 
-    public void addItemToFront(Selfie selfie) {
+    public void addItemToFront(Selfie selfie){
         int position = 0;
         mSelfies.add(position, selfie);
         notifyItemInserted(position);
