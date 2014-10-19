@@ -65,18 +65,10 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
             Log.d(TAG, "Success!!!");
 
             mContext.mGridFragment.populateList(result.getResponse().selfies);
-            /*
-            try {
-               readSelfieStream(result.getStream());
-            }catch (IOException e) {
-                Log.e(TAG, e.getMessage());
-            }
-            */
 
         }
         else {
             //display error message
-            Log.d(TAG, "Failure...");
 
         }
     }

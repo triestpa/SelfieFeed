@@ -1,26 +1,27 @@
 package com.triestpa.selfiefeed;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
-import com.squareup.picasso.Picasso;
-
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class PictureGridFragment extends Fragment {
     SelfieFeedActivity mActivity;
     View mView;
-    ListView mListView;
-    ListAdapter mAdapter;
+
+    private RecyclerView mRecyclerView;
+    private SelfieAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    List<Selfie> mSelfieList;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,96 +33,36 @@ public class PictureGridFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         mView = inflater.inflate(R.layout.fragment_picture_grid, container, false);
 
-        mListView = (ListView) mView.findViewById(R.id.gridview);
+        mRecyclerView = (RecyclerView) mView.findViewById(R.id.gridview);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(mActivity);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mSelfieList = new ArrayList<Selfie>();
+        mAdapter = new SelfieAdapter(mSelfieList, mActivity);
+        mRecyclerView.setAdapter(mAdapter);
 
         return mView;
     }
 
     public void populateList(List<Selfie> selfieList) {
-        mAdapter = new SelfieAdapter(selfieList);
-        mListView.setAdapter(mAdapter);
+       mSelfieList.addAll(selfieList);
+
+        mRecyclerView.removeAllViews();
+
+       for (Selfie selfie : selfieList) {
+           mAdapter.addItem(selfie);
+       }
     }
 
-    public static class ViewHolder {
-        public ImageView selfieImage;
-    }
-
-    private class SelfieAdapter extends BaseAdapter {
-        private static final int LIST_ITEM_TYPE_BIG_PIC = 0;
-        private static final int LIST_ITEM_TYPE_SMALL_PIC = 1;
-
-        private List<Selfie> mSelfies;
-
-        private LayoutInflater mInflater;
-
-        public SelfieAdapter(List<Selfie> selfies) {
-            mInflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            mSelfies = selfies;
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            /*
-            if (mSelfies.get(position))
-                return LIST_ITEM_TYPE_BIG_PIC;
-            else
-                return LIST_ITEM_TYPE_SMALL_PIC;
-            */
-            return LIST_ITEM_TYPE_BIG_PIC;
-        }
-
-        @Override
-        public int getViewTypeCount() {
-            return 2;
-        }
-
-        @Override
-        public int getCount() {
-            return mSelfies.size();
-        }
-
-        @Override
-        public Selfie getItem(int position) {
-            return mSelfies.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder = null;
-            int type = getItemViewType(position);
-            if (convertView == null) {
-                holder = new ViewHolder();
-                switch (type) {
-                    case LIST_ITEM_TYPE_BIG_PIC:
-                        convertView = mInflater.inflate(R.layout.adapter_selfie_cell, parent, false);
-                        holder.selfieImage = (ImageView) convertView.findViewById(R.id.selfie_image);
-                        break;
-                    case LIST_ITEM_TYPE_SMALL_PIC:
-                        convertView = mInflater.inflate(R.layout.adapter_selfie_cell, parent, false);
-                        holder.selfieImage = (ImageView) convertView.findViewById(R.id.selfie_image);
-                        break;
-                }
-
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
 
 
-            Selfie thisSelfie = mSelfies.get(position);
-            if (thisSelfie != null) {
-                String imageURL = thisSelfie.images.standard_resolution.url;
-                Picasso.with(mActivity).load(imageURL).resize(500, 500).noFade().centerCrop().into(holder.selfieImage);
-            }
-
-            return convertView;
-        }
-    }
 }
