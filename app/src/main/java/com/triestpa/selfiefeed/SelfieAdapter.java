@@ -6,13 +6,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+/*
+Adapter for the core RecyclerView. This will recieve data on each selfie, create(or recycle) a cardview, and download the image to fill it
+ */
 public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder> {
     final String TAG = SelfieAdapter.class.getSimpleName();
 
@@ -22,7 +24,6 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public View mView;
         public ImageView mSelfieImage;
-        public Button mButton;
 
         public ViewHolder(View v) {
             super(v);
@@ -49,6 +50,7 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
         StaggeredGridLayoutManager.LayoutParams layoutParams = new StaggeredGridLayoutManager.LayoutParams(100, 100);
         ViewGroup.LayoutParams imageParams = holder.mSelfieImage.getLayoutParams();
 
+        //Position every third picture in the center spot
         if ((position % 3) == 0) {
             layoutParams.setFullSpan(true);
             imageParams.height = 500;
@@ -67,6 +69,7 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
         if (thisSelfie != null) {
             final String imageURL = thisSelfie.images.standard_resolution.url;
 
+            // Zoom the image when taped
             holder.mSelfieImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -74,6 +77,8 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
                     mActivity.mGridFragment.zoomImageFromThumb(holder.mSelfieImage, imageURL);
                 }
             });
+
+            // Load and scale the image from the given url using Picasso
             Picasso.with(mActivity).load(imageURL).fit().noFade().centerCrop().into(holder.mSelfieImage);
         }
     }
@@ -86,11 +91,10 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
     public void addItemToBack(Selfie selfie) throws IndexOutOfBoundsException {
         int position = mSelfies.size();
         mSelfies.add(position, selfie);
-
         notifyItemInserted(position);
     }
 
-    public void addItemToFront(Selfie selfie){
+    public void addItemToFront(Selfie selfie) {
         int position = 0;
         mSelfies.add(position, selfie);
         notifyItemInserted(position);

@@ -1,15 +1,13 @@
 package com.triestpa.selfiefeed;
 
-import com.google.gson.annotations.SerializedName;
-
+/* Store the image URLs and details for each selfie */
 public class Selfie {
 
     String filter;
     String id;
-
-    @SerializedName("images")
     Images images;
 
+    // Three different sizes of images are returned, the standard is a good balance between size and quality.
     class Images {
         Image low_resolution;
         Image thumbnail;
@@ -21,16 +19,6 @@ public class Selfie {
         String width;
         String height;
     }
-/*
-    String thumbnailPictureURL;
-    String lowResPictureURL;
-    String fullResPictureURL;
-
-    String createdTime;
-    String caption;
-    String user;
-    String likes;
-    */
 
 
     public Selfie () {}

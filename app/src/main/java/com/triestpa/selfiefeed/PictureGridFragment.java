@@ -26,13 +26,16 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-
+/* This fragment is the meat of the application. This is where the network requests are call from, where the RecyclerView rendering the images is instantiated, and where the UI elements of the app are linked to their functions */
 public class PictureGridFragment extends Fragment {
     final String TAG = PictureGridFragment.class.getSimpleName();
     SelfieFeedActivity mActivity;
+
+    // Booleans to ensure that multiple animations and network requests don't run at once
     boolean isDownloading = false;
     boolean buttonAnimating = false;
 
+    // The network requests for newer and older selfies are generated using these strings
     String mMaxId;
     String mNextPage;
 
@@ -59,25 +62,6 @@ public class PictureGridFragment extends Fragment {
         mView = inflater.inflate(R.layout.fragment_picture_grid, container, false);
 
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.gridview);
-        mLoadMoreButton = (Button) mView.findViewById(R.id.load_more);
-
-        //Load the next page of results on click
-        mLoadMoreButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!isDownloading && mNextPage != null) {
-                    isDownloading = true;
-                    mLoadMoreButton.setText("Downloading");
-                    String apiCall = mNextPage;
-                    Log.d(TAG, apiCall);
-                    String[] taskParams = {apiCall};
-                    SelfiePullTask pullTask = new SelfiePullTask(mActivity);
-
-                    pullTask.execute(taskParams);
-                }
-            }
-        });
-
         mRecyclerView.setHasFixedSize(false);
         mLayoutManager = new StaggeredGridLayoutManager(2, 1);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -103,6 +87,24 @@ public class PictureGridFragment extends Fragment {
                     } catch (ArrayIndexOutOfBoundsException e) {
                         Log.e(TAG, e.getMessage());
                     }
+                }
+            }
+        });
+
+        //Load the next page of results on clicking the load-more button
+        mLoadMoreButton = (Button) mView.findViewById(R.id.load_more);
+        mLoadMoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!isDownloading && mNextPage != null) {
+                    isDownloading = true;
+                    mLoadMoreButton.setText("Downloading");
+                    String apiCall = mNextPage;
+                    Log.d(TAG, apiCall);
+                    String[] taskParams = {apiCall};
+                    SelfiePullTask pullTask = new SelfiePullTask(mActivity);
+
+                    pullTask.execute(taskParams);
                 }
             }
         });
@@ -158,6 +160,7 @@ public class PictureGridFragment extends Fragment {
             }
         });
 
+        // Instantiate the selfie adapter
         mAdapter = new SelfieAdapter(new ArrayList<Selfie>(), mActivity);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -171,9 +174,11 @@ public class PictureGridFragment extends Fragment {
         return mView;
     }
 
+    // Add items to the list
     public void populateList(Response response) {
         // If it is not 'refreshing' then it is loading an older response page
         if (!mSwipeRefreshLayout.isRefreshing()) {
+            //If loading older results, add to the bottom of the list
             for (Selfie selfie : response.selfies) {
                 mAdapter.addItemToBack(selfie);
             }
@@ -181,10 +186,9 @@ public class PictureGridFragment extends Fragment {
             mLoadMoreButton.setText(getString(R.string.load_more));
             isDownloading = false;
         } else {
-
+            // if adding new results, add to the top of the list
             for (Selfie selfie : response.selfies) {
                 mAdapter.addItemToFront(selfie);
-
                 mMaxId = response.selfies.get(0).id;
                 mRecyclerView.scrollToPosition(response.selfies.size());
             }
