@@ -53,8 +53,8 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
         //Position every third picture in the center spot
         if ((position % 3) == 0) {
             layoutParams.setFullSpan(true);
-            imageParams.height = 500;
-            imageParams.width = 500;
+            imageParams.height = 600;
+            imageParams.width = 600;
 
         } else {
             layoutParams.setFullSpan(false);

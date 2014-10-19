@@ -71,7 +71,7 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
             }
         }
         else {
-            Toast.makeText(mContext, "Error Loading Selfies", Toast.LENGTH_SHORT);
+            Toast.makeText(mContext, "Error Loading Selfies", Toast.LENGTH_SHORT).show();
             mContext.mGridFragment.mSwipeRefreshLayout.setRefreshing(false);
             mContext.mGridFragment.isDownloading = false;
         }
