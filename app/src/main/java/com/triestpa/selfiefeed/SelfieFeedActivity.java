@@ -16,12 +16,6 @@ public class SelfieFeedActivity extends FragmentActivity {
 
         mGridFragment = new PictureGridFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, mGridFragment).commit();
-
-        String apiCall = "https://api.instagram.com/v1/tags/selfie/media/recent?client_id=" + getResources().getString(R.string.client_id);
-        String [] taskParams = {apiCall};
-
-        SelfiePullTask pullTask = new SelfiePullTask(this);
-        pullTask.execute(taskParams);
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -21,6 +22,7 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public View mView;
         public ImageView mSelfieImage;
+        public Button mButton;
 
         public ViewHolder(View v) {
             super(v);
@@ -28,6 +30,7 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
             mSelfieImage = (ImageView) v.findViewById(R.id.selfie_image);
         }
     }
+
 
     public SelfieAdapter(List<Selfie> selfies, SelfieFeedActivity context) {
         mSelfies = selfies;
@@ -45,7 +48,6 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         StaggeredGridLayoutManager.LayoutParams layoutParams = new StaggeredGridLayoutManager.LayoutParams(100, 100);
-
         ViewGroup.LayoutParams imageParams = holder.mSelfieImage.getLayoutParams();
 
         if ((position % 3) == 0) {
@@ -53,8 +55,7 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
             imageParams.height = 500;
             imageParams.width = 500;
 
-        }
-        else {
+        } else {
             layoutParams.setFullSpan(false);
             imageParams.height = 300;
             imageParams.width = 300;
@@ -73,7 +74,6 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
                     Log.d(TAG, thisSelfie.filter);
                 }
             });
-
             Picasso.with(mActivity).load(imageURL).fit().noFade().centerCrop().into(holder.mSelfieImage);
         }
     }
@@ -86,6 +86,7 @@ public class SelfieAdapter extends RecyclerView.Adapter<SelfieAdapter.ViewHolder
     public void addItemToBack(Selfie selfie) {
         int position = mSelfies.size();
         mSelfies.add(position, selfie);
+
         notifyItemInserted(position);
     }
 

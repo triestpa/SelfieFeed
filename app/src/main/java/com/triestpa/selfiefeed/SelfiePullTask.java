@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.triestpa.selfiefeed.SelfiePullTask.NetworkRequestResult;
@@ -54,6 +55,11 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
+
+        if (!result.getResponse().meta.code.equals("200")) {
+            result.setCode(NetworkRequestResult.HTTP_ERROR);
+        }
+
         return result.setCode(NetworkRequestResult.SUCCESS);
     }
 
@@ -61,20 +67,14 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
     protected void onPostExecute(NetworkRequestResult result) {
         super.onPostExecute(result);
         if (result.getCode() == NetworkRequestResult.SUCCESS) {
-            //hide loading animation, populate list
-            Log.d(TAG, "Success!!!");
 
             if (result.getResponse().selfies != null) {
-                mContext.mGridFragment.mMaxId = result.getResponse().selfies.get(0).id;
-                mContext.mGridFragment.populateList(result.getResponse().selfies);
-                mContext.mGridFragment.mSwipeRefreshLayout.setRefreshing(false);
-                mContext.mGridFragment.mRecyclerView.scrollToPosition(result.getResponse().selfies.size());
+                mContext.mGridFragment.populateList(result.getResponse());
 
             }
         }
         else {
-            //display error message
-
+            Toast.makeText(mContext, "Error Loading Selfies", Toast.LENGTH_SHORT);
         }
     }
 
@@ -106,14 +106,6 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
         Gson gson = new Gson();
 
         Response response = gson.fromJson(inputReader, Response.class);
-        Log.d(TAG, response.meta.code);
-        Log.d(TAG, response.pagination.nextURL);
-
-        for (Selfie selfie : response.selfies) {
-            Log.d(TAG, selfie.filter);
-            Log.d(TAG, selfie.images.standard_resolution.url);
-        }
-
         return response;
     }
 
@@ -125,15 +117,11 @@ public class SelfiePullTask extends AsyncTask<String, Void, NetworkRequestResult
         public static final int NO_NETWORK = 1;
         public static final int NO_ROUTE = 2;
         public static final int HTTP_ERROR = 3;
-        public static final int NO_CACHE = 4;
-        public static final int NO_DATA = 5;
+        public static final int NO_DATA = 4;
 
         private int code;
         private InputStream stream;
         private Response response;
-
-
-
 
         public NetworkRequestResult (int resultCode, InputStream resultStream) {
             code = resultCode;
